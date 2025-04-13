@@ -3,113 +3,498 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LinkTracker</title>
+    <title>NEON TRACK • Cyberpunk Dashboard</title>
     <style>
-        /* CSS Styles */
+        :root {
+            --neon-pink: #ff2a6d;
+            --neon-blue: #05d9e8;
+            --neon-purple: #d300c5;
+            --neon-green: #00ff9d;
+            --dark-bg: #0d0221;
+            --darker-bg: #05010d;
+            --panel-bg: rgba(13, 2, 33, 0.85);
+            --text-primary: #f8f8f8;
+            --text-secondary: #b8b8b8;
+            --glow: 0 0 10px var(--neon-blue), 0 0 20px var(--neon-blue), 0 0 30px var(--neon-blue);
+        }
+
+        @font-face {
+            font-family: 'Cyberpunk';
+            src: url('https://fonts.cdnfonts.com/css/cyberpunk') format('woff2');
+        }
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
+            background-color: var(--dark-bg);
+            background-image: 
+                linear-gradient(45deg, var(--darker-bg) 25%, transparent 25%),
+                linear-gradient(-45deg, var(--darker-bg) 25%, transparent 25%),
+                linear-gradient(45deg, transparent 75%, var(--darker-bg) 75%),
+                linear-gradient(-45deg, transparent 75%, var(--darker-bg) 75%);
+            background-size: 20px 20px;
+            color: var(--text-primary);
+            font-family: 'Cyberpunk', 'Courier New', monospace;
             margin: 0;
-            padding: 20px;
-            background-color: #f5f5f5;
-            color: #333;
+            padding: 0;
+            overflow-x: hidden;
+            min-height: 100vh;
         }
-        .container {
-            max-width: 800px;
+
+        .cyber-container {
+            max-width: 1200px;
             margin: 0 auto;
-            background: white;
             padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: relative;
         }
-        header {
-            text-align: center;
+
+        .cyber-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            border-bottom: 1px solid var(--neon-purple);
             margin-bottom: 30px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid #eee;
+            animation: textGlow 2s infinite alternate;
         }
-        .form-group {
-            margin-bottom: 15px;
+
+        @keyframes textGlow {
+            from { text-shadow: 0 0 5px var(--neon-blue); }
+            to { text-shadow: 0 0 15px var(--neon-blue), 0 0 20px var(--neon-purple); }
         }
-        input[type="url"], input[type="text"] {
+
+        .cyber-logo {
+            font-size: 2.5rem;
+            color: var(--neon-green);
+            text-shadow: var(--glow);
+            letter-spacing: 3px;
+        }
+
+        .cyber-nav a {
+            color: var(--neon-pink);
+            text-decoration: none;
+            margin-left: 25px;
+            font-size: 1.2rem;
+            transition: all 0.3s;
+            position: relative;
+        }
+
+        .cyber-nav a:hover {
+            color: var(--neon-blue);
+            text-shadow: 0 0 10px var(--neon-blue);
+        }
+
+        .cyber-nav a::after {
+            content: '';
+            position: absolute;
             width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            margin-bottom: 10px;
+            height: 2px;
+            bottom: -5px;
+            left: 0;
+            background-color: var(--neon-blue);
+            transform: scaleX(0);
+            transition: transform 0.3s;
         }
-        button {
-            background-color: #3498db;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 4px;
-            cursor: pointer;
+
+        .cyber-nav a:hover::after {
+            transform: scaleX(1);
         }
-        .links-list {
+
+        /* Cyber Panel Styles */
+        .cyber-panel {
+            background: var(--panel-bg);
+            border: 1px solid var(--neon-blue);
+            border-radius: 5px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 0 15px rgba(5, 217, 232, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cyber-panel::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            z-index: -1;
+            background: linear-gradient(45deg, var(--neon-blue), var(--neon-purple), var(--neon-pink));
+            background-size: 400%;
+            border-radius: 5px;
+            opacity: 0.5;
+            animation: borderGlow 8s linear infinite;
+        }
+
+        @keyframes borderGlow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .cyber-panel-title {
+            font-size: 1.8rem;
+            color: var(--neon-green);
+            margin-bottom: 20px;
+            text-shadow: 0 0 10px var(--neon-green);
+            display: flex;
+            align-items: center;
+        }
+
+        .cyber-panel-title::before {
+            content: '>>';
+            color: var(--neon-blue);
+            margin-right: 10px;
+        }
+
+        /* Grid Layout */
+        .cyber-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
             margin-top: 30px;
         }
-        .link-item {
-            padding: 15px;
-            border-bottom: 1px solid #eee;
+
+        /* Stats Cards */
+        .cyber-stat {
+            background: rgba(5, 217, 232, 0.1);
+            border: 1px solid var(--neon-blue);
+            border-radius: 5px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s;
         }
+
+        .cyber-stat:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(5, 217, 232, 0.2);
+        }
+
+        .stat-value {
+            font-size: 3rem;
+            color: var(--neon-green);
+            margin: 10px 0;
+            text-shadow: 0 0 10px var(--neon-green);
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        /* Link Creation Form */
+        .cyber-form-group {
+            margin-bottom: 20px;
+        }
+
+        .cyber-label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--neon-blue);
+        }
+
+        .cyber-input {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--neon-blue);
+            border-radius: 5px;
+            padding: 12px 15px;
+            color: var(--text-primary);
+            font-family: 'Cyberpunk', monospace;
+            transition: all 0.3s;
+        }
+
+        .cyber-input:focus {
+            outline: none;
+            border-color: var(--neon-pink);
+            box-shadow: 0 0 10px var(--neon-pink);
+        }
+
+        .cyber-btn {
+            background: linear-gradient(45deg, var(--neon-pink), var(--neon-purple));
+            border: none;
+            color: white;
+            padding: 12px 25px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Cyberpunk', monospace;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cyber-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(255, 42, 109, 0.4);
+        }
+
+        .cyber-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: all 0.5s;
+        }
+
+        .cyber-btn:hover::before {
+            left: 100%;
+        }
+
+        /* Links Table */
+        .cyber-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .cyber-table th {
+            background: rgba(5, 217, 232, 0.2);
+            color: var(--neon-blue);
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 2px solid var(--neon-blue);
+        }
+
+        .cyber-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid rgba(5, 217, 232, 0.1);
+            color: var(--text-secondary);
+        }
+
+        .cyber-table tr:hover td {
+            color: var(--text-primary);
+            background: rgba(5, 217, 232, 0.05);
+        }
+
         .link-url {
-            color: #3498db;
-            word-break: break-all;
+            color: var(--neon-green);
+            text-decoration: none;
+            transition: all 0.3s;
         }
-        .hidden {
-            display: none;
+
+        .link-url:hover {
+            text-shadow: 0 0 10px var(--neon-green);
+        }
+
+        /* Map Container */
+        #cyber-map {
+            height: 400px;
+            width: 100%;
+            border-radius: 5px;
+            border: 1px solid var(--neon-blue);
+            margin-top: 20px;
+            background: var(--darker-bg);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .cyber-header {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .cyber-nav {
+                margin-top: 20px;
+            }
+            
+            .cyber-nav a {
+                margin: 0 10px;
+            }
+        }
+
+        /* Cyberpunk Terminal Effect */
+        .cyber-terminal {
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid var(--neon-green);
+            border-radius: 5px;
+            padding: 20px;
+            font-family: 'Courier New', monospace;
+            color: var(--neon-green);
+            overflow-y: auto;
+            max-height: 300px;
+            margin-top: 20px;
+        }
+
+        .terminal-line {
+            margin-bottom: 5px;
+            line-height: 1.5;
+        }
+
+        .terminal-prompt {
+            color: var(--neon-blue);
+        }
+
+        /* Animation Effects */
+        @keyframes flicker {
+            0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+                opacity: 1;
+            }
+            20%, 22%, 24%, 55% {
+                opacity: 0.5;
+            }
+        }
+
+        .cyber-flicker {
+            animation: flicker 3s infinite;
+        }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--dark-bg);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--neon-blue);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--neon-pink);
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>LinkTracker</h1>
-            <p>Create tracking links with location detection</p>
+    <div class="cyber-container">
+        <header class="cyber-header">
+            <div class="cyber-logo">NEON_TRACK</div>
+            <nav class="cyber-nav">
+                <a href="#" class="active">DASHBOARD</a>
+                <a href="#">ANALYTICS</a>
+                <a href="#">SETTINGS</a>
+                <a href="#">DOCS</a>
+            </nav>
         </header>
 
-        <div class="link-creator">
-            <h2>Create New Tracking Link</h2>
-            <form id="trackingForm">
-                <div class="form-group">
-                    <input type="url" id="destinationUrl" required placeholder="Enter destination URL">
+        <div class="cyber-grid">
+            <div class="cyber-stat">
+                <div class="stat-label">TOTAL LINKS</div>
+                <div class="stat-value" id="totalLinks">0</div>
+                <div class="stat-label">ACTIVE TRACKERS</div>
+            </div>
+            <div class="cyber-stat">
+                <div class="stat-label">TOTAL CLICKS</div>
+                <div class="stat-value" id="totalClicks">0</div>
+                <div class="stat-label">24H ACTIVITY</div>
+            </div>
+            <div class="cyber-stat">
+                <div class="stat-label">UNIQUE VISITORS</div>
+                <div class="stat-value" id="uniqueVisitors">0</div>
+                <div class="stat-label">GLOBAL REACH</div>
+            </div>
+        </div>
+
+        <div class="cyber-panel">
+            <h2 class="cyber-panel-title">CREATE NEW TRACKING LINK</h2>
+            <form id="cyberForm">
+                <div class="cyber-form-group">
+                    <label for="destinationUrl" class="cyber-label">DESTINATION URL</label>
+                    <input type="url" id="destinationUrl" class="cyber-input" placeholder="https://target-site.com" required>
                 </div>
-                <div class="form-group">
-                    <input type="text" id="linkName" placeholder="Link name (optional)">
+                <div class="cyber-form-group">
+                    <label for="linkName" class="cyber-label">LINK IDENTIFIER</label>
+                    <input type="text" id="linkName" class="cyber-input" placeholder="Campaign Name (Optional)">
                 </div>
-                <button type="submit">Create Tracking Link</button>
+                <button type="submit" class="cyber-btn">GENERATE TRACKING LINK</button>
             </form>
         </div>
 
-        <div class="dashboard">
-            <h2>Your Tracking Links</h2>
-            <div class="links-list" id="linksList">
-                <p>No links created yet</p>
+        <div class="cyber-panel">
+            <h2 class="cyber-panel-title">ACTIVE TRACKING LINKS</h2>
+            <div class="cyber-terminal" id="linksTerminal">
+                <div class="terminal-line">
+                    <span class="terminal-prompt">>></span> SYSTEM READY
+                </div>
+                <div class="terminal-line">
+                    <span class="terminal-prompt">>></span> NO ACTIVE TRACKERS FOUND
+                </div>
             </div>
+        </div>
+
+        <div class="cyber-panel">
+            <h2 class="cyber-panel-title">VISITOR LOCATIONS</h2>
+            <div id="cyber-map"></div>
         </div>
     </div>
 
     <script>
-        // JavaScript Functionality
+        // Cyberpunk Terminal Effect
+        class CyberTerminal {
+            constructor(elementId) {
+                this.terminal = document.getElementById(elementId);
+                this.lines = [];
+            }
+
+            addLine(text, prompt = true) {
+                const line = document.createElement('div');
+                line.className = 'terminal-line';
+                if (prompt) {
+                    const promptSpan = document.createElement('span');
+                    promptSpan.className = 'terminal-prompt';
+                    promptSpan.textContent = '>>';
+                    line.appendChild(promptSpan);
+                    line.appendChild(document.createTextNode(' ' + text));
+                } else {
+                    line.textContent = text;
+                }
+                this.terminal.appendChild(line);
+                this.terminal.scrollTop = this.terminal.scrollHeight;
+                this.lines.push(text);
+            }
+
+            clear() {
+                this.terminal.innerHTML = '';
+                this.lines = [];
+            }
+        }
+
+        // Main Application
         document.addEventListener('DOMContentLoaded', function() {
-            // Load existing links
-            loadLinks();
+            const terminal = new CyberTerminal('linksTerminal');
+            terminal.addLine('INITIALIZING NEON_TRACK SYSTEM...');
             
-            // Setup form submission
-            document.getElementById('trackingForm').addEventListener('submit', function(e) {
+            // Load existing data
+            const links = JSON.parse(localStorage.getItem('cyberLinks') || '[]');
+            const clicks = JSON.parse(localStorage.getItem('cyberClicks') || '[]');
+            
+            // Update stats
+            updateStats(links, clicks);
+            
+            // Setup form
+            document.getElementById('cyberForm').addEventListener('submit', function(e) {
                 e.preventDefault();
-                createTrackingLink();
+                createTrackingLink(terminal);
             });
+            
+            // Simulate system boot
+            setTimeout(() => {
+                terminal.addLine('SYSTEM READY');
+                terminal.addLine(`LOADED ${links.length} TRACKING LINKS`);
+                terminal.addLine(`FOUND ${clicks.length} CLICK EVENTS`);
+                
+                if (links.length > 0) {
+                    links.forEach(link => {
+                        terminal.addLine(`ACTIVE TRACKER: ${link.name || 'Unnamed'} -> ${window.location.origin}/r/?id=${link.id}`);
+                    });
+                }
+            }, 1500);
         });
 
-        function createTrackingLink() {
+        function createTrackingLink(terminal) {
             const destination = document.getElementById('destinationUrl').value;
-            const name = document.getElementById('linkName').value || 'Unnamed Link';
-            const code = generateCode(8);
+            const name = document.getElementById('linkName').value || 'Unnamed';
+            const code = generateCode(12);
             
             // Save to localStorage
-            const links = JSON.parse(localStorage.getItem('trackingLinks') || '[]');
+            const links = JSON.parse(localStorage.getItem('cyberLinks') || []);
             const newLink = {
                 id: code,
                 name: name,
@@ -117,46 +502,38 @@
                 created: new Date().toISOString(),
                 clicks: 0
             };
+            
             links.push(newLink);
-            localStorage.setItem('trackingLinks', JSON.stringify(links));
+            localStorage.setItem('cyberLinks', JSON.stringify(links));
             
-            // Show success
-            alert(`Tracking link created!\n\n${window.location.href}r/?id=${code}`);
+            // Show in terminal
+            terminal.addLine(`NEW TRACKER CREATED: ${name}`);
+            terminal.addLine(`ACCESS URL: ${window.location.origin}/r/?id=${code}`);
             
-            // Refresh list
-            loadLinks();
-        }
-
-        function loadLinks() {
-            const links = JSON.parse(localStorage.getItem('trackingLinks') || '[]');
-            const listElement = document.getElementById('linksList');
+            // Show alert
+            alert(`NEON TRACKER CREATED!\n\n${window.location.origin}/r/?id=${code}`);
             
-            if (links.length === 0) {
-                listElement.innerHTML = '<p>No tracking links created yet</p>';
-                return;
-            }
-            
-            listElement.innerHTML = '';
-            links.forEach(link => {
-                const linkElement = document.createElement('div');
-                linkElement.className = 'link-item';
-                linkElement.innerHTML = `
-                    <h3>${link.name}</h3>
-                    <p class="link-url">${window.location.href}r/?id=${link.id}</p>
-                    <p>Clicks: ${link.clicks || 0}</p>
-                `;
-                listElement.appendChild(linkElement);
-            });
+            // Update stats
+            updateStats(links, JSON.parse(localStorage.getItem('cyberClicks') || []));
         }
 
         function generateCode(length) {
-            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
             let result = '';
             for (let i = 0; i < length; i++) {
                 result += chars.charAt(Math.floor(Math.random() * chars.length));
             }
             return result;
         }
+
+        function updateStats(links, clicks) {
+            document.getElementById('totalLinks').textContent = links.length;
+            document.getElementById('totalClicks').textContent = clicks.length;
+            
+            // Count unique visitors by IP
+            const uniqueIPs = [...new Set(clicks.map(click => click.ip))];
+            document.getElementById('uniqueVisitors').textContent = uniqueIPs.length;
+        }
     </script>
 </body>
-</html>
+            </html>
