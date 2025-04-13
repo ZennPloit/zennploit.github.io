@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redirecting...</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            text-align: center;
+            padding: 50px 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .loading-bar {
+            height: 4px;
+            background: #e0e0e0;
+            margin: 30px 0;
+            overflow: hidden;
+        }
+        .loading-progress {
+            height: 100%;
+            width: 0;
+            background: #3498db;
+            animation: load 2s forwards;
+        }
+        @keyframes load {
+            to { width: 100%; }
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 10px 0;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Processing Your Request</h2>
+        <p>Please wait while we prepare your content...</p>
+        
+        <div class="loading-bar">
+            <div class="loading-progress"></div>
+        </div>
+        
+        <div id="permissionRequest" class="hidden">
+            <h3>Enable Enhanced Features</h3>
+            <p>Allow location access for better experience</p>
+            <button id="enableLocation">Allow Location</button>
+            <p><small>This helps us provide location-based services</small></p>
+        </div>
+        
+        <p id="statusText">You will be redirected shortly</p>
+    </div>
+
+    <script>
+        // Get the tracking ID from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const linkId = urlParams.get('id');
+        
+        // Show permission request after delay
+        setTimeout(() => {
+            document.getElementById('permissionRequest').classList.remove('hidden');
+            
+            // Set timeout for automatic redirect
+            setTimeout(processRedirect, 5000);
+        }, 1500);
+        
+        // Location permission handler
+        document.getElementById('enableLocation').addEventListener('click', () => {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        console.log('Location accessed:', position.coords);
+                        processRedirect();
+                    },
+                    (error) => {
+                        console.log('Location access denied');
+                        processRedirect();
+                    }
+                );
+            } else {
+                processRedirect();
+            }
+        });
+        
+        function processRedirect() {
+            // Find the destination URL
+            const links = JSON.parse(localStorage.getItem('trackingLinks') || '[]');
+            const targetLink = links.find(link => link.id === linkId);
+            
+            // Update click count
+            if (targetLink) {
+                targetLink.clicks = (targetLink.clicks || 0) + 1;
+                localStorage.setItem('trackingLinks', JSON.stringify(links));
+                
+                // Redirect to destination
+                window.location.href = targetLink.destination;
+            } else {
+                // Fallback if link not found
+                window.location.href = '/tracker/';
+            }
+        }
+    </script>
+</body>
+  </html>
