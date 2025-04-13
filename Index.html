@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LinkTracker Pro</title>
+    <style>
+        /* Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        /* Layout */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 20px 0;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        header .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin-left: 20px;
+            padding: 5px 10px;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+        
+        nav a:hover, nav a.active {
+            background-color: #3498db;
+        }
+        
+        /* Dashboard Styles */
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        
+        .stat-card h3 {
+            color: #7f8c8d;
+            margin-bottom: 10px;
+            font-size: 1rem;
+        }
+        
+        .stat-card p {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #ecf0f1;
+        }
+        
+        th {
+            background-color: #3498db;
+            color: white;
+        }
+        
+        tr:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .btn {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        .btn:hover {
+            background-color: #2980b9;
+        }
+        
+        .btn-danger {
+            background-color: #e74c3c;
+        }
+        
+        .btn-danger:hover {
+            background-color: #c0392b;
+        }
+        
+        /* Link Creation Styles */
+        .link-creation {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        
+        input[type="text"],
+        input[type="url"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        
+        small {
+            color: #7f8c8d;
+            font-size: 0.8rem;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .link-result {
+            display: flex;
+            margin: 20px 0;
+        }
+        
+        .link-result input {
+            flex-grow: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px 0 0 4px;
+            font-size: 1rem;
+        }
+        
+        .link-result button {
+            border-radius: 0 4px 4px 0;
+        }
+        
+        .link-info {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 20px;
+        }
+        
+        .link-info p {
+            margin-bottom: 10px;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .stats {
+                grid-template-columns: 1fr;
+            }
+            
+            header .container {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            nav {
+                margin-top: 15px;
+            }
+            
+            nav a {
+                margin: 0 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container" id="app">
+        <!-- This will be dynamically populated by JavaScript -->
+    </div>
+
+    <script>
+        // Data storage (in a real app, this would be a database)
+        const linksDB = JSON.parse(localStorage.getItem('trackingLinks')) || [];
+        const clicksDB = JSON.parse(localStorage.getItem('trackingClicks')) || [];
+        
+        // DOM Elements
+        const app = document.getElementById('app');
+        
+        // Router
+        const routes = {
+            '/': dashboard,
+            '/create': createLink
+        };
+        
+        // Initial render
+        renderView(window.location.pathname);
+        
+        // Navigation
+        document.addEventListener('click', e => {
+            if (e.target.tagName === 'A' && e.target.getAttribute('href').startsWith('/')) {
+                e.preventDefault();
+                const path = e.target.getAttribute('href');
+                window.history.pushState({}, path, window.location.origin + path);
+                renderView(path);
+            }
+        });
+        
+        // Handle browser back/forward
+        window.addEventListener('popstate', () => {
+            renderView(window.location.pathname);
+        });
+        
+        function renderView(path) {
+            const viewFn = routes[path] || dashboard;
+            app.innerHTML = viewFn();
+            
+            // Initialize view-specific JS
+            if (path === '/') {
+                initDashboard();
+            } else if (path === '/create') {
+                initCreateLink();
+            }
+        }
+        
+        // Views
+        function dashboard() {
+            return `
+                <header>
+                    <div class="container">
+                        <h1>LinkTracker Pro</h1>
+                        <nav>
+                            <a href="/" class="active">Dashboard</a>
+                            <a href="/create">Create Link</a>
+                        </nav>
+                    </div>
+                </header>
+                
+                <main>
+                    <section class="stats">
+                        <div class="stat-card">
+                            <h3>Total Links</h3>
+                            <p id="total-links">${linksDB.length}</p>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Total Clicks</h3>
+                            <p id="total-clicks">${clicksDB.length}</p>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Unique Visitors</h3>
+                            <p id="unique-visitors">${new Set(clicksDB.map(c => c.ip)).size}</p>
+                        </div>
+                    </section>
+                    
+                    <section class="recent-links">
+                        <h2>Recent Tracking Links</h2>
+                        <table id="links-table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Short URL</th>
+                                    <th>Clicks</th>
+                                    <th>Created</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${linksDB.slice(0, 10).map(link => `
+                                    <tr>
+                                        <td>${link.name}</td>
+                                        <td><a href="/track/${link.slug}" target="_blank">${window.location.host}/track/${link.slug}</a></td>
+                                        <td>${clicksDB.filter(c => c.slug === link.slug).length}</td>
+                                        <td>${new Date(link.createdAt).toLocaleDateString()}</td>
+                                        <td>
+                                            <button class="btn" onclick="copyLink('${link.slug}')">Copy</button>
+                                            <button class="btn btn-danger" onclick="deleteLink('${link.slug}')">Delete</button>
+                                        </td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </section>
+                </main>
+            `;
+        }
+        
+        function createLink() {
+            return `
+                <header>
+                    <div class="container">
+                        <h1>LinkTracker Pro</h1>
+                        <nav>
+                            <a href="/">Dashboard</a>
+                            <a href="/create" class="active">Create Link</a>
+                        </nav>
+                    </div>
+                </header>
+                
+                <main>
+                    <section class="link-creation">
+                        <h2>Create New Tracking Link</h2>
+                        <form id="link-form">
+                            <div class="form-group">
+                                <label for="link-name">Link Name</label>
+                                <input type="text" id="link-name" required placeholder="e.g. Summer Promotion">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="destination-url">Destination URL</label>
+                                <input type="url" id="destination-url" required placeholder="https://example.com">
+                            </div>
+                            
+                            <div class="form-group">
+                                <label for="custom-slug">Custom Slug (optional)</label>
+                                <input type="text" id="custom-slug" placeholder="my-custom-link">
+                                <small>Leave blank for auto-generated</small>
+                            </div>
+                            
+                            <button type="submit" class="btn">Create Tracking Link</button>
+                        </form>
+                        
+                        <div id="result-container" class="hidden">
+                            <h3>Your Tracking Link:</h3>
+                            <div class="link-result">
+                                <input type="text" id="generated-link" readonly>
+                                <button id="copy-btn" class="btn">Copy</button>
+                            </div>
+                            <div class="link-info">
+                                <p><strong>Tracking URL:</strong> <span id="tracking-url"></span></p>
+                                <p><strong>Destination:</strong> <span id="tracking-destination"></span></p>
+                            </div>
+                        </div>
+                    </section>
+                </main>
+            `;
+        }
+        
+        // View Initializers
+        function initDashboard() {
+            // Dashboard-specific JS can go here
+        }
+        
+        function initCreateLink() {
+            const form = document.getElementById('link-form');
+            const resultContainer = document.getElementById('result-container');
+            const generatedLink = document.getElementById('generated-link');
+            const trackingUrl = document.getElementById('tracking-url');
+            const trackingDestination = document.getElementById('tracking-destination');
+            const copyBtn = document.getElementById('copy-btn');
+            
+            form.addEventListener('submit', e => {
+                e.preventDefault();
+                
+                const name = document.getElementById('link-name').value;
+                const destination = document.getElementById('destination-url').value;
+                const customSlug = document.getElementById('custom-slug').value;
+                
+                const slug = customSlug || generateSlug();
+                const trackingLink = `${window.location.origin}/track/${slug}`;
+                
+                // Save to "database"
+                linksDB.push({
+                    name,
+                    destination,
+                    slug,
+                    createdAt: new Date().toISOString()
+                });
+                
+                localStorage.setItem('trackingLinks', JSON.stringify(linksDB));
+                
+                // Show results
+                generatedLink.value = trackingLink;
+                trackingUrl.textContent = trackingLink;
+                trackingDestination.textContent = destination;
+                resultContainer.classList.remove('hidden');
+                
+                // Reset form
+                form.reset();
+            });
+            
+            copyBtn.addEventListener('click', () => {
+                generatedLink.select();
+                document.execCommand('copy');
+                copyBtn.textContent = 'Copied!';
+                setTimeout(() => {
+                    copyBtn.textContent = 'Copy';
+                }, 2000);
+            });
+        }
+        
+        // Helper Functions
+        function generateSlug() {
+            return Math.random().toString(36).substring(2, 8);
+        }
+        
+        function copyLink(slug) {
+            const link = `${window.location.origin}/track/${slug}`;
+            navigator.clipboard.writeText(link);
+            alert('Link copied to clipboard!');
+        }
+        
+        function deleteLink(slug) {
+            if (confirm('Are you sure you want to delete this tracking link?')) {
+                const index = linksDB.findIndex(link => link.slug === slug);
+                if (index !== -1) {
+                    linksDB.splice(index, 1);
+                    localStorage.setItem('trackingLinks', JSON.stringify(linksDB));
+                    
+                    // Remove related clicks
+                    const updatedClicks = clicksDB.filter(click => click.slug !== slug);
+                    localStorage.setItem('trackingClicks', JSON.stringify(updatedClicks));
+                    
+                    renderView(window.location.pathname);
+                }
+            }
+        }
+        
+        // Track route (this would normally be a server endpoint)
+        if (window.location.pathname.startsWith('/track/')) {
+            const slug = window.location.pathname.split('/')[2];
+            const link = linksDB.find(l => l.slug === slug);
+            
+            if (link) {
+                // Simulate getting IP and location (in a real app, you'd get this from the server)
+                const ip = '192.168.1.1'; // This would come from the server
+                const location = {
+                    city: 'New York',
+                    region: 'NY',
+                    country: 'US'
+                };
+                
+                // Save click
+                clicksDB.push({
+                    slug,
+                    ip,
+                    location,
+                    userAgent: navigator.userAgent,
+                    timestamp: new Date().toISOString(),
+                    referrer: document.referrer
+                });
+                
+                localStorage.setItem('trackingClicks', JSON.stringify(clicksDB));
+                
+                // Redirect to destination
+                window.location.href = link.destination;
+            } else {
+                document.body.innerHTML = `
+                    <div class="container" style="text-align: center; padding: 50px;">
+                        <h1>404 - Link Not Found</h1>
+                        <p>The tracking link you requested doesn't exist.</p>
+                        <a href="/">Go to Dashboard</a>
+                    </div>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>
