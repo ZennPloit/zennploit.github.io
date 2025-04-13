@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LinkTracker</title>
+    <style>
+        /* CSS Styles */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        input[type="url"], input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .links-list {
+            margin-top: 30px;
+        }
+        .link-item {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+        }
+        .link-url {
+            color: #3498db;
+            word-break: break-all;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>LinkTracker</h1>
+            <p>Create tracking links with location detection</p>
+        </header>
+
+        <div class="link-creator">
+            <h2>Create New Tracking Link</h2>
+            <form id="trackingForm">
+                <div class="form-group">
+                    <input type="url" id="destinationUrl" required placeholder="Enter destination URL">
+                </div>
+                <div class="form-group">
+                    <input type="text" id="linkName" placeholder="Link name (optional)">
+                </div>
+                <button type="submit">Create Tracking Link</button>
+            </form>
+        </div>
+
+        <div class="dashboard">
+            <h2>Your Tracking Links</h2>
+            <div class="links-list" id="linksList">
+                <p>No links created yet</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // JavaScript Functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load existing links
+            loadLinks();
+            
+            // Setup form submission
+            document.getElementById('trackingForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                createTrackingLink();
+            });
+        });
+
+        function createTrackingLink() {
+            const destination = document.getElementById('destinationUrl').value;
+            const name = document.getElementById('linkName').value || 'Unnamed Link';
+            const code = generateCode(8);
+            
+            // Save to localStorage
+            const links = JSON.parse(localStorage.getItem('trackingLinks') || '[]');
+            const newLink = {
+                id: code,
+                name: name,
+                destination: destination,
+                created: new Date().toISOString(),
+                clicks: 0
+            };
+            links.push(newLink);
+            localStorage.setItem('trackingLinks', JSON.stringify(links));
+            
+            // Show success
+            alert(`Tracking link created!\n\n${window.location.href}r/?id=${code}`);
+            
+            // Refresh list
+            loadLinks();
+        }
+
+        function loadLinks() {
+            const links = JSON.parse(localStorage.getItem('trackingLinks') || '[]');
+            const listElement = document.getElementById('linksList');
+            
+            if (links.length === 0) {
+                listElement.innerHTML = '<p>No tracking links created yet</p>';
+                return;
+            }
+            
+            listElement.innerHTML = '';
+            links.forEach(link => {
+                const linkElement = document.createElement('div');
+                linkElement.className = 'link-item';
+                linkElement.innerHTML = `
+                    <h3>${link.name}</h3>
+                    <p class="link-url">${window.location.href}r/?id=${link.id}</p>
+                    <p>Clicks: ${link.clicks || 0}</p>
+                `;
+                listElement.appendChild(linkElement);
+            });
+        }
+
+        function generateCode(length) {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            let result = '';
+            for (let i = 0; i < length; i++) {
+                result += chars.charAt(Math.floor(Math.random() * chars.length));
+            }
+            return result;
+        }
+    </script>
+</body>
+</html>
