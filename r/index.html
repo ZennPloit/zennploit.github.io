@@ -3,118 +3,423 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Redirecting...</title>
+    <title>NEON TRACK • Processing</title>
     <style>
+        :root {
+            --neon-pink: #ff2a6d;
+            --neon-blue: #05d9e8;
+            --neon-purple: #d300c5;
+            --neon-green: #00ff9d;
+            --dark-bg: #0d0221;
+            --darker-bg: #05010d;
+            --panel-bg: rgba(13, 2, 33, 0.85);
+            --text-primary: #f8f8f8;
+            --text-secondary: #b8b8b8;
+            --glow: 0 0 10px var(--neon-blue), 0 0 20px var(--neon-blue), 0 0 30px var(--neon-blue);
+        }
+
+        @font-face {
+            font-family: 'Cyberpunk';
+            src: url('https://fonts.cdnfonts.com/css/cyberpunk') format('woff2');
+        }
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            text-align: center;
-            padding: 50px 20px;
-            background-color: #f5f5f5;
-        }
-        .container {
-            max-width: 500px;
-            margin: 0 auto;
-            background: white;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        .loading-bar {
-            height: 4px;
-            background: #e0e0e0;
-            margin: 30px 0;
+            background-color: var(--dark-bg);
+            background-image: 
+                radial-gradient(circle at 20% 30%, var(--neon-purple) 0%, transparent 30%),
+                radial-gradient(circle at 80% 70%, var(--neon-blue) 0%, transparent 30%);
+            color: var(--text-primary);
+            font-family: 'Cyberpunk', 'Courier New', monospace;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             overflow: hidden;
         }
-        .loading-progress {
+
+        .cyber-container {
+            max-width: 600px;
+            width: 90%;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .cyber-logo {
+            font-size: 3rem;
+            color: var(--neon-green);
+            text-shadow: var(--glow);
+            margin-bottom: 30px;
+            animation: textGlow 2s infinite alternate;
+        }
+
+        @keyframes textGlow {
+            from { text-shadow: 0 0 5px var(--neon-green); }
+            to { text-shadow: 0 0 15px var(--neon-green), 0 0 25px var(--neon-blue); }
+        }
+
+        .cyber-status {
+            font-size: 1.2rem;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            text-shadow: 0 0 5px var(--neon-blue);
+        }
+
+        .progress-container {
+            width: 100%;
+            height: 10px;
+            background: rgba(5, 217, 232, 0.1);
+            border-radius: 5px;
+            margin: 30px 0;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-bar {
             height: 100%;
             width: 0;
-            background: #3498db;
-            animation: load 2s forwards;
+            background: linear-gradient(90deg, var(--neon-pink), var(--neon-purple));
+            border-radius: 5px;
+            animation: progressLoad 3s forwards;
+            position: relative;
+            overflow: hidden;
         }
-        @keyframes load {
+
+        .progress-bar::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, 
+                transparent, 
+                rgba(255, 255, 255, 0.4), 
+                transparent);
+            animation: progressShine 2s infinite;
+        }
+
+        @keyframes progressLoad {
             to { width: 100%; }
         }
-        button {
-            background-color: #3498db;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 4px;
-            cursor: pointer;
-            margin: 10px 0;
+
+        @keyframes progressShine {
+            from { transform: translateX(-100%); }
+            to { transform: translateX(100%); }
         }
-        .hidden {
+
+        .permission-box {
+            background: var(--panel-bg);
+            border: 1px solid var(--neon-blue);
+            border-radius: 5px;
+            padding: 20px;
+            margin: 30px 0;
+            box-shadow: 0 0 20px rgba(5, 217, 232, 0.3);
             display: none;
+            animation: borderPulse 3s infinite;
+        }
+
+        @keyframes borderPulse {
+            0% { box-shadow: 0 0 10px rgba(5, 217, 232, 0.3); }
+            50% { box-shadow: 0 0 30px rgba(5, 217, 232, 0.6); }
+            100% { box-shadow: 0 0 10px rgba(5, 217, 232, 0.3); }
+        }
+
+        .permission-title {
+            color: var(--neon-blue);
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+        }
+
+        .permission-text {
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        .cyber-btn {
+            background: linear-gradient(45deg, var(--neon-pink), var(--neon-purple));
+            border: none;
+            color: white;
+            padding: 12px 30px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-family: 'Cyberpunk', monospace;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin: 0 10px;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cyber-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(255, 42, 109, 0.4);
+        }
+
+        .cyber-btn-outline {
+            background: transparent;
+            border: 1px solid var(--neon-blue);
+            color: var(--neon-blue);
+        }
+
+        .cyber-btn-outline:hover {
+            background: rgba(5, 217, 232, 0.1);
+        }
+
+        .scanlines {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(
+                to bottom,
+                transparent 95%,
+                rgba(5, 217, 232, 0.1) 96%
+            );
+            background-size: 100% 5px;
+            pointer-events: none;
+            z-index: 0;
+            animation: scanline 10s linear infinite;
+        }
+
+        @keyframes scanline {
+            from { background-position: 0 0; }
+            to { background-position: 0 100%; }
+        }
+
+        .glitch {
+            position: relative;
+        }
+
+        .glitch::before, .glitch::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0.8;
+        }
+
+        .glitch::before {
+            color: var(--neon-pink);
+            z-index: -1;
+            animation: glitch-effect 3s infinite;
+        }
+
+        .glitch::after {
+            color: var(--neon-blue);
+            z-index: -2;
+            animation: glitch-effect 2s infinite reverse;
+        }
+
+        @keyframes glitch-effect {
+            0% { transform: translate(0); }
+            20% { transform: translate(-3px, 3px); }
+            40% { transform: translate(-3px, -3px); }
+            60% { transform: translate(3px, 3px); }
+            80% { transform: translate(3px, -3px); }
+            100% { transform: translate(0); }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h2>Processing Your Request</h2>
-        <p>Please wait while we prepare your content...</p>
+    <div class="scanlines"></div>
+    
+    <div class="cyber-container">
+        <div class="cyber-logo glitch" data-text="NEON_TRACK">NEON_TRACK</div>
+        <div class="cyber-status" id="statusText">INITIALIZING TRACKING SEQUENCE...</div>
         
-        <div class="loading-bar">
-            <div class="loading-progress"></div>
+        <div class="progress-container">
+            <div class="progress-bar"></div>
         </div>
         
-        <div id="permissionRequest" class="hidden">
-            <h3>Enable Enhanced Features</h3>
-            <p>Allow location access for better experience</p>
-            <button id="enableLocation">Allow Location</button>
-            <p><small>This helps us provide location-based services</small></p>
+        <div class="permission-box" id="permissionBox">
+            <div class="permission-title">ENHANCED TRACKING REQUEST</div>
+            <div class="permission-text">
+                Enable location services for advanced analytics, threat detection, 
+                and regional content optimization. Your data remains encrypted and secure.
+            </div>
+            <button class="cyber-btn" id="enableBtn">ALLOW ACCESS</button>
+            <button class="cyber-btn cyber-btn-outline" id="skipBtn">SKIP FOR NOW</button>
         </div>
-        
-        <p id="statusText">You will be redirected shortly</p>
     </div>
 
     <script>
-        // Get the tracking ID from URL
-        const urlParams = new URLSearchParams(window.location.search);
-        const linkId = urlParams.get('id');
-        
-        // Show permission request after delay
-        setTimeout(() => {
-            document.getElementById('permissionRequest').classList.remove('hidden');
+        // Cyberpunk Tracking System
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const linkId = urlParams.get('id');
+            const statusText = document.getElementById('statusText');
+            const permissionBox = document.getElementById('permissionBox');
             
-            // Set timeout for automatic redirect
-            setTimeout(processRedirect, 5000);
-        }, 1500);
-        
-        // Location permission handler
-        document.getElementById('enableLocation').addEventListener('click', () => {
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(
-                    (position) => {
-                        console.log('Location accessed:', position.coords);
-                        processRedirect();
-                    },
-                    (error) => {
-                        console.log('Location access denied');
-                        processRedirect();
-                    }
-                );
-            } else {
-                processRedirect();
+            if (!linkId) {
+                window.location.href = '/tracker/';
+                return;
             }
+            
+            // Start collecting data
+            const clickData = {
+                id: generateId(),
+                linkId: linkId,
+                timestamp: new Date().toISOString(),
+                referrer: document.referrer || 'direct',
+                userAgent: navigator.userAgent,
+                screenWidth: window.screen.width,
+                screenHeight: window.screen.height,
+                language: navigator.language,
+                platform: navigator.platform,
+                ip: '',
+                city: '',
+                country: '',
+                isp: '',
+                deviceBrand: '',
+                deviceModel: '',
+                os: '',
+                browser: '',
+                latitude: null,
+                longitude: null,
+                accuracy: null
+            };
+            
+            // Simulate system checks
+            setTimeout(() => {
+                statusText.textContent = "VERIFYING LINK INTEGRITY...";
+            }, 1000);
+            
+            setTimeout(() => {
+                statusText.textContent = "ANALYZING NETWORK THREATS...";
+            }, 2000);
+            
+            setTimeout(() => {
+                statusText.textContent = "OPTIMIZING DELIVERY NODES...";
+                permissionBox.style.display = 'block';
+                
+                // Set timeout for automatic redirect
+                setTimeout(() => completeRedirect(linkId, clickData), 10000);
+            }, 3000);
+            
+            // Button handlers
+            document.getElementById('enableBtn').addEventListener('click', function() {
+                statusText.textContent = "ACQUIRING LOCATION DATA...";
+                permissionBox.style.display = 'none';
+                
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(
+                        function(position) {
+                            clickData.latitude = position.coords.latitude;
+                            clickData.longitude = position.coords.longitude;
+                            clickData.accuracy = position.coords.accuracy;
+                            statusText.textContent = "LOCATION DATA SECURED";
+                            setTimeout(() => completeRedirect(linkId, clickData), 1000);
+                        },
+                        function(error) {
+                            statusText.textContent = "LOCATION REQUEST DENIED";
+                            setTimeout(() => completeRedirect(linkId, clickData), 1000);
+                        },
+                        {
+                            enableHighAccuracy: true,
+                            timeout: 5000,
+                            maximumAge: 0
+                        }
+                    );
+                } else {
+                    completeRedirect(linkId, clickData);
+                }
+            });
+            
+            document.getElementById('skipBtn').addEventListener('click', function() {
+                statusText.textContent = "PROCEEDING WITH BASIC TRACKING...";
+                permissionBox.style.display = 'none';
+                setTimeout(() => completeRedirect(linkId, clickData), 1000);
+            });
+            
+            // Get IP and approximate location
+            fetch('https://ipapi.co/json/')
+                .then(response => response.json())
+                .then(data => {
+                    clickData.ip = data.ip;
+                    clickData.city = data.city;
+                    clickData.country = data.country_name;
+                    clickData.isp = data.org;
+                    
+                    // Detect device info
+                    detectDeviceInfo(clickData);
+                });
         });
         
-        function processRedirect() {
+        function detectDeviceInfo(data) {
+            const ua = navigator.userAgent;
+            
+            // Detect OS
+            if (ua.match(/Android/i)) {
+                data.os = 'Android';
+                const modelMatch = ua.match(/Android\s([^;]*);\s([^)]*)\)/i);
+                if (modelMatch) {
+                    data.deviceBrand = modelMatch[2].split(';')[0].trim();
+                    data.deviceModel = modelMatch[1];
+                }
+            } else if (ua.match(/iPhone|iPad|iPod/i)) {
+                data.os = 'iOS';
+                data.deviceBrand = 'Apple';
+                const modelMatch = ua.match(/iPhone\s([^\s]*)/i) || 
+                                  ua.match(/iPad[^\d]*([\d,]*)/i) ||
+                                  ua.match(/iPod[^\d]*([\d,]*)/i);
+                if (modelMatch) data.deviceModel = modelMatch[1];
+            } else if (ua.match(/Windows/i)) {
+                data.os = 'Windows';
+            } else if (ua.match(/Macintosh/i)) {
+                data.os = 'Mac OS';
+            } else if (ua.match(/Linux/i)) {
+                data.os = 'Linux';
+            }
+            
+            // Detect browser
+            if (ua.match(/Chrome/i)) {
+                data.browser = 'Chrome';
+            } else if (ua.match(/Firefox/i)) {
+                data.browser = 'Firefox';
+            } else if (ua.match(/Safari/i)) {
+                data.browser = 'Safari';
+            } else if (ua.match(/Edge/i)) {
+                data.browser = 'Edge';
+            } else if (ua.match(/Opera|OPR/i)) {
+                data.browser = 'Opera';
+            }
+        }
+        
+        function completeRedirect(linkId, clickData) {
             // Find the destination URL
-            const links = JSON.parse(localStorage.getItem('trackingLinks') || '[]');
+            const links = JSON.parse(localStorage.getItem('cyberLinks') || []);
             const targetLink = links.find(link => link.id === linkId);
             
-            // Update click count
-            if (targetLink) {
-                targetLink.clicks = (targetLink.clicks || 0) + 1;
-                localStorage.setItem('trackingLinks', JSON.stringify(links));
-                
-                // Redirect to destination
-                window.location.href = targetLink.destination;
-            } else {
-                // Fallback if link not found
+            if (!targetLink) {
                 window.location.href = '/tracker/';
+                return;
             }
+            
+            // Update click count
+            targetLink.clicks = (targetLink.clicks || 0) + 1;
+            localStorage.setItem('cyberLinks', JSON.stringify(links));
+            
+            // Save click data
+            const clicks = JSON.parse(localStorage.getItem('cyberClicks') || []);
+            clicks.push(clickData);
+            localStorage.setItem('cyberClicks', JSON.stringify(clicks));
+            
+            // Redirect to destination
+            window.location.href = targetLink.destination;
+        }
+        
+        function generateId() {
+            return Math.random().toString(36).substr(2, 9);
         }
     </script>
 </body>
-  </html>
+    </html>
