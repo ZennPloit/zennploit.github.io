@@ -1,1 +1,879 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Processing Your Request | LinkTrack Pro</title>
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-dark: #3a56d4;
+            --secondary: #3f37c9;
+            --accent: #4895ef;
+            --success: #4cc9f0;
+            --warning: #f8961e;
+            --danger: #f72585;
+            --dark: #1b263b;
+            --darker: #14213d;
+            --light: #f8f9fa;
+            --lighter: #ffffff;
+            --gray: #adb5bd;
+            --gray-light: #e9ecef;
+            --shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            --radius: 12px;
+            --transition: all 0.3s ease;
+        }
 
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Roboto', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fb;
+            color: var(--dark);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .tracker-container {
+            max-width: 600px;
+            width: 100%;
+            background-color: var(--lighter);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            overflow: hidden;
+        }
+
+        .tracker-header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .tracker-header h1 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .tracker-header p {
+            opacity: 0.9;
+            font-size: 0.9rem;
+        }
+
+        .tracker-content {
+            padding: 2rem;
+        }
+
+        .status-card {
+            background-color: var(--lighter);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            text-align: center;
+            box-shadow: var(--shadow);
+        }
+
+        .spinner {
+            border: 5px solid var(--gray-light);
+            border-top: 5px solid var(--accent);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1.5rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .status-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+        }
+
+        .status-message {
+            color: var(--gray);
+            margin-bottom: 1rem;
+        }
+
+        .location-permission {
+            background-color: rgba(248, 150, 30, 0.1);
+            border-left: 4px solid var(--warning);
+            padding: 1.5rem;
+            border-radius: var(--radius);
+            margin-bottom: 1.5rem;
+        }
+
+        .location-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+            color: var(--dark);
+        }
+
+        .location-header i {
+            color: var(--warning);
+            font-size: 1.2rem;
+        }
+
+        .location-message {
+            margin-bottom: 1rem;
+            color: var(--dark);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.75rem 1.5rem;
+            font-size: 1rem;
+            font-weight: 500;
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .btn-block {
+            display: block;
+            width: 100%;
+        }
+
+        .location-data {
+            background-color: rgba(76, 201, 240, 0.1);
+            border-radius: var(--radius);
+            padding: 1rem;
+            margin-top: 1rem;
+            display: none;
+        }
+
+        .data-row {
+            display: flex;
+            margin-bottom: 0.5rem;
+        }
+
+        .data-label {
+            font-weight: 500;
+            width: 120px;
+            color: var(--dark);
+        }
+
+        .data-value {
+            flex: 1;
+        }
+
+        .error-message {
+            background-color: rgba(247, 37, 133, 0.1);
+            border-left: 4px solid var(--danger);
+            padding: 1.5rem;
+            border-radius: var(--radius);
+            color: var(--danger);
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .error-message i {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .countdown-message {
+            background-color: rgba(72, 149, 239, 0.1);
+            border-left: 4px solid var(--accent);
+            padding: 1.5rem;
+            border-radius: var(--radius);
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .redirect-btn {
+            background-color: var(--success);
+            color: white;
+        }
+
+        .redirect-btn:hover {
+            opacity: 0.9;
+        }
+
+        .blocked-message {
+            background-color: rgba(247, 37, 133, 0.1);
+            border-left: 4px solid var(--danger);
+            padding: 1.5rem;
+            border-radius: var(--radius);
+            text-align: center;
+        }
+
+        .blocked-message h3 {
+            color: var(--danger);
+            margin-bottom: 0.5rem;
+        }
+
+        .password-form {
+            margin-top: 1.5rem;
+        }
+
+        .password-form input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--gray-light);
+            border-radius: var(--radius);
+            font-size: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .expired-message {
+            background-color: rgba(248, 150, 30, 0.1);
+            border-left: 4px solid var(--warning);
+            padding: 1.5rem;
+            border-radius: var(--radius);
+            text-align: center;
+        }
+
+        .expired-message h3 {
+            color: var(--warning);
+            margin-bottom: 0.5rem;
+        }
+
+        .device-info {
+            background-color: var(--gray-light);
+            border-radius: var(--radius);
+            padding: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+
+        .info-item {
+            margin-bottom: 0.5rem;
+        }
+
+        .info-label {
+            font-size: 0.8rem;
+            color: var(--gray);
+            margin-bottom: 0.25rem;
+        }
+
+        .info-value {
+            font-weight: 500;
+            color: var(--dark);
+        }
+
+        .cookie-consent {
+            background-color: rgba(67, 97, 238, 0.1);
+            border-left: 4px solid var(--primary);
+            padding: 1.5rem;
+            border-radius: var(--radius);
+            margin-bottom: 1.5rem;
+        }
+
+        .cookie-consent h3 {
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+        }
+
+        .cookie-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .click-limit-message {
+            background-color: rgba(247, 37, 133, 0.1);
+            border-left: 4px solid var(--danger);
+            padding: 1.5rem;
+            border-radius: var(--radius);
+            text-align: center;
+        }
+
+        .click-limit-message h3 {
+            color: var(--danger);
+            margin-bottom: 0.5rem;
+        }
+
+        .campaign-info {
+            background-color: rgba(72, 149, 239, 0.1);
+            border-radius: var(--radius);
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .campaign-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--dark);
+        }
+
+        .campaign-meta {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+
+        .campaign-meta span {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <div class="tracker-container">
+        <div class="tracker-header">
+            <h1><i class="fas fa-link"></i> LinkTrack Pro</h1>
+            <p>Processing your request</p>
+        </div>
+
+        <div class="tracker-content">
+            <div id="loadingSection" class="status-card">
+                <div class="spinner"></div>
+                <h2 class="status-title">Verifying Link</h2>
+                <p class="status-message">Please wait while we process your request...</p>
+            </div>
+            
+            <div id="campaignInfo" class="campaign-info" style="display: none;">
+                <div class="campaign-title" id="campaignTitle"></div>
+                <div class="campaign-meta">
+                    <span><i class="fas fa-calendar"></i> <span id="campaignDate"></span></span>
+                    <span><i class="fas fa-user"></i> <span id="campaignCreator"></span></span>
+                </div>
+            </div>
+            
+            <div id="locationSection" class="location-permission" style="display: none;">
+                <div class="location-header">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <h3>Location Access Required</h3>
+                </div>
+                <p class="location-message">To continue, we need permission to access your device's location. This helps us provide better service.</p>
+                <p id="locationStatus" style="margin-bottom: 1rem; font-size: 0.9rem; color: var(--gray);">
+                    <i class="fas fa-circle-notch fa-spin"></i> Waiting for your response...
+                </p>
+                <button id="requestLocationBtn" class="btn btn-primary btn-block">
+                    <i class="fas fa-location-arrow"></i> Allow Location Access
+                </button>
+                <div id="locationError" class="error-message" style="display: none; margin-top: 1rem;"></div>
+                
+                <div id="locationData" class="location-data">
+                    <div class="data-row">
+                        <div class="data-label">Latitude:</div>
+                        <div class="data-value" id="latitude"></div>
+                    </div>
+                    <div class="data-row">
+                        <div class="data-label">Longitude:</div>
+                        <div class="data-value" id="longitude"></div>
+                    </div>
+                    <div class="data-row">
+                        <div class="data-label">Accuracy:</div>
+                        <div class="data-value" id="accuracy"></div>
+                    </div>
+                    <div class="data-row">
+                        <div class="data-label">Approximate Address:</div>
+                        <div class="data-value" id="address"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="cookieConsent" class="cookie-consent" style="display: none;">
+                <h3><i class="fas fa-cookie-bite"></i> Cookie Consent</h3>
+                <p>We use cookies to track your visit and provide a better experience. By continuing, you agree to our use of cookies.</p>
+                <div class="cookie-actions">
+                    <button id="acceptCookiesBtn" class="btn btn-primary">
+                        <i class="fas fa-check"></i> Accept All
+                    </button>
+                    <button id="rejectCookiesBtn" class="btn btn-outline">
+                        <i class="fas fa-times"></i> Reject Non-Essential
+                    </button>
+                </div>
+            </div>
+            
+            <div id="passwordSection" style="display: none;">
+                <div class="status-card">
+                    <i class="fas fa-lock" style="font-size: 2rem; color: var(--primary); margin-bottom: 1rem;"></i>
+                    <h2 class="status-title">Password Required</h2>
+                    <p class="status-message">This link is protected with a password. Please enter it to continue.</p>
+                    
+                    <div class="password-form">
+                        <input type="password" id="passwordInput" placeholder="Enter password">
+                        <button id="submitPasswordBtn" class="btn btn-primary btn-block">
+                            <i class="fas fa-unlock"></i> Continue
+                        </button>
+                    </div>
+                    <div id="passwordError" class="error-message" style="display: none; margin-top: 1rem;"></div>
+                </div>
+            </div>
+            
+            <div id="expiredSection" class="expired-message" style="display: none;">
+                <h3><i class="fas fa-exclamation-triangle"></i> Link Expired</h3>
+                <p>This tracking link has expired and is no longer available.</p>
+            </div>
+            
+            <div id="clickLimitSection" class="click-limit-message" style="display: none;">
+                <h3><i class="fas fa-exclamation-circle"></i> Click Limit Reached</h3>
+                <p>This link has reached its maximum number of clicks and is no longer active.</p>
+            </div>
+            
+            <div id="blockedSection" class="blocked-message" style="display: none;">
+                <h3><i class="fas fa-ban"></i> Access Denied</h3>
+                <p>You must allow location access to continue. Please refresh the page and grant permission when prompted.</p>
+            </div>
+            
+            <div id="redirectSection" class="countdown-message" style="display: none;">
+                <h2 class="status-title">Redirecting...</h2>
+                <p class="status-message">You will be automatically redirected in <span id="countdown">5</span> seconds.</p>
+                <button id="redirectBtn" class="btn redirect-btn btn-block">
+                    <i class="fas fa-external-link-alt"></i> Click here if not redirected
+                </button>
+            </div>
+            
+            <div id="errorSection" class="error-message" style="display: none;">
+                <i class="fas fa-exclamation-circle"></i>
+                <h3>Error Processing Link</h3>
+                <p>The destination URL is invalid or unavailable. Please check the link and try again.</p>
+            </div>
+
+            <div id="deviceInfoSection" class="device-info" style="display: none;">
+                <h4 style="margin-bottom: 1rem; color: var(--dark);">Device Information</h4>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <div class="info-label">Device Type</div>
+                        <div class="info-value" id="deviceType">Desktop</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Browser</div>
+                        <div class="info-value" id="browserName">Chrome</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Operating System</div>
+                        <div class="info-value" id="osName">Windows</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Screen Resolution</div>
+                        <div class="info-value" id="screenRes">1920x1080</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Language</div>
+                        <div class="info-value" id="browserLanguage">English</div>
+                    </div>
+                    <div class="info-item">
+                        <div class="info-label">Referrer</div>
+                        <div class="info-value" id="referrerInfo">Direct</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const params = new URLSearchParams(window.location.search);
+            const loadingSection = document.getElementById('loadingSection');
+            const locationSection = document.getElementById('locationSection');
+            const passwordSection = document.getElementById('passwordSection');
+            const expiredSection = document.getElementById('expiredSection');
+            const clickLimitSection = document.getElementById('clickLimitSection');
+            const blockedSection = document.getElementById('blockedSection');
+            const redirectSection = document.getElementById('redirectSection');
+            const errorSection = document.getElementById('errorSection');
+            const deviceInfoSection = document.getElementById('deviceInfoSection');
+            const cookieConsent = document.getElementById('cookieConsent');
+            const campaignInfo = document.getElementById('campaignInfo');
+            const requestLocationBtn = document.getElementById('requestLocationBtn');
+            const locationStatus = document.getElementById('locationStatus');
+            const locationError = document.getElementById('locationError');
+            const locationData = document.getElementById('locationData');
+            const submitPasswordBtn = document.getElementById('submitPasswordBtn');
+            const passwordInput = document.getElementById('passwordInput');
+            const passwordError = document.getElementById('passwordError');
+            const redirectBtn = document.getElementById('redirectBtn');
+            const countdownEl = document.getElementById('countdown');
+            const acceptCookiesBtn = document.getElementById('acceptCookiesBtn');
+            const rejectCookiesBtn = document.getElementById('rejectCookiesBtn');
+            
+            // Check if link has expired
+            const expiryDate = params.get('expiry');
+            if (expiryDate && new Date(expiryDate) < new Date()) {
+                loadingSection.style.display = 'none';
+                expiredSection.style.display = 'block';
+                return;
+            }
+            
+            // Check if click limit has been reached
+            const clickLimit = params.get('limit');
+            if (clickLimit) {
+                // In a real app, you would check against actual click count from your database
+                // For demo purposes, we'll simulate a check
+                const simulatedClickCount = Math.floor(Math.random() * 20);
+                if (simulatedClickCount >= parseInt(clickLimit)) {
+                    loadingSection.style.display = 'none';
+                    clickLimitSection.style.display = 'block';
+                    return;
+                }
+            }
+            
+            // Show campaign info if available
+            if (params.get('campaign')) {
+                document.getElementById('campaignTitle').textContent = decodeURIComponent(params.get('campaign'));
+                document.getElementById('campaignDate').textContent = new Date().toLocaleDateString();
+                document.getElementById('campaignCreator').textContent = "Marketing Team";
+                campaignInfo.style.display = 'block';
+            }
+            
+            // Check if password is required
+            const password = params.get('password');
+            if (password) {
+                loadingSection.style.display = 'none';
+                passwordSection.style.display = 'block';
+                
+                submitPasswordBtn.addEventListener('click', function() {
+                    if (passwordInput.value === password) {
+                        // Password correct, proceed with tracking
+                        passwordSection.style.display = 'none';
+                        startTrackingProcess();
+                    } else {
+                        passwordError.textContent = "Incorrect password. Please try again.";
+                        passwordError.style.display = 'block';
+                    }
+                });
+                
+                return;
+            }
+            
+            // Start normal tracking process
+            startTrackingProcess();
+            
+            function startTrackingProcess() {
+                const destinationUrl = params.get('url');
+                const geoEnabled = params.get('geo') === '1';
+                const deviceEnabled = params.get('device') === '1';
+                const referrerEnabled = params.get('referrer') === '1';
+                const cookieEnabled = params.get('cookie') === '1';
+                
+                if (!destinationUrl || !isValidUrl(decodeURIComponent(destinationUrl))) {
+                    showError();
+                    return;
+                }
+                
+                // Show cookie consent if enabled
+                if (cookieEnabled && !localStorage.getItem('cookieConsent')) {
+                    loadingSection.style.display = 'none';
+                    cookieConsent.style.display = 'block';
+                    
+                    acceptCookiesBtn.addEventListener('click', function() {
+                        localStorage.setItem('cookieConsent', 'all');
+                        cookieConsent.style.display = 'none';
+                        continueTrackingProcess();
+                    });
+                    
+                    rejectCookiesBtn.addEventListener('click', function() {
+                        localStorage.setItem('cookieConsent', 'essential');
+                        cookieConsent.style.display = 'none';
+                        continueTrackingProcess();
+                    });
+                    
+                    return;
+                }
+                
+                continueTrackingProcess();
+                
+                function continueTrackingProcess() {
+                    if (deviceEnabled || referrerEnabled) {
+                        detectDeviceInfo();
+                        deviceInfoSection.style.display = 'block';
+                    }
+                    
+                    if (geoEnabled) {
+                        // Request location if enabled
+                        loadingSection.style.display = 'none';
+                        locationSection.style.display = 'block';
+                        
+                        requestLocationBtn.addEventListener('click', function() {
+                            requestLocationBtn.disabled = true;
+                            locationStatus.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Accessing location...';
+                            
+                            if (!navigator.geolocation) {
+                                locationError.textContent = "Geolocation is not supported by your browser.";
+                                locationError.style.display = 'block';
+                                showBlockedMessage();
+                                return;
+                            }
+                            
+                            navigator.geolocation.getCurrentPosition(
+                                function(position) {
+                                    // Successfully got location
+                                    locationStatus.innerHTML = '<i class="fas fa-check-circle" style="color: var(--success);"></i> Location accessed successfully';
+                                    locationError.style.display = 'none';
+                                    
+                                    // Display location data
+                                    document.getElementById('latitude').textContent = position.coords.latitude.toFixed(6);
+                                    document.getElementById('longitude').textContent = position.coords.longitude.toFixed(6);
+                                    document.getElementById('accuracy').textContent = `${position.coords.accuracy} meters`;
+                                    locationData.style.display = 'block';
+                                    
+                                    // Get approximate address
+                                    getAddressFromCoords(position.coords.latitude, position.coords.longitude);
+                                    
+                                    // Record tracking and redirect
+                                    recordTracking();
+                                    startRedirectCountdown();
+                                },
+                                function(error) {
+                                    // Failed to get location
+                                    let errorMessage = "";
+                                    
+                                    switch(error.code) {
+                                        case error.PERMISSION_DENIED:
+                                            errorMessage = "You denied the request for geolocation.";
+                                            break;
+                                        case error.POSITION_UNAVAILABLE:
+                                            errorMessage = "Location information is unavailable.";
+                                            break;
+                                        case error.TIMEOUT:
+                                            errorMessage = "The request to get location timed out.";
+                                            break;
+                                        case error.UNKNOWN_ERROR:
+                                            errorMessage = "An unknown error occurred.";
+                                            break;
+                                    }
+                                    
+                                    locationStatus.innerHTML = '<i class="fas fa-times-circle" style="color: var(--danger);"></i> Failed to get location';
+                                    locationError.textContent = errorMessage;
+                                    locationError.style.display = 'block';
+                                    
+                                    showBlockedMessage();
+                                },
+                                {
+                                    enableHighAccuracy: true,
+                                    timeout: 10000,
+                                    maximumAge: 0
+                                }
+                            );
+                        });
+                    } else {
+                        // Location not required, proceed with tracking
+                        recordTracking();
+                        startRedirectCountdown();
+                    }
+                }
+            }
+            
+            function detectDeviceInfo() {
+                const userAgent = navigator.userAgent;
+                let deviceType = 'Desktop';
+                let browserName = 'Unknown';
+                let osName = 'Unknown';
+                
+                // Detect device type
+                if (/Mobi|Android|iPhone|iPad|iPod/i.test(userAgent)) {
+                    deviceType = 'Mobile';
+                    if (/iPad|iPhone|iPod/.test(userAgent)) {
+                        deviceType = 'Tablet';
+                    }
+                }
+                
+                // Detect browser
+                if (userAgent.includes('Firefox/')) {
+                    browserName = 'Firefox';
+                } else if (userAgent.includes('Edg/')) {
+                    browserName = 'Edge';
+                } else if (userAgent.includes('Chrome/')) {
+                    browserName = 'Chrome';
+                } else if (userAgent.includes('Safari/')) {
+                    browserName = 'Safari';
+                } else if (userAgent.includes('OPR/')) {
+                    browserName = 'Opera';
+                }
+                
+                // Detect OS
+                if (userAgent.includes('Windows')) {
+                    osName = 'Windows';
+                } else if (userAgent.includes('Macintosh')) {
+                    osName = 'Mac OS';
+                } else if (userAgent.includes('Linux')) {
+                    osName = 'Linux';
+                } else if (userAgent.includes('Android')) {
+                    osName = 'Android';
+                } else if (userAgent.includes('iPhone') || userAgent.includes('iPad')) {
+                    osName = 'iOS';
+                }
+                
+                // Detect referrer
+                let referrer = document.referrer || 'Direct';
+                if (referrer.includes('facebook.com')) referrer = 'Facebook';
+                if (referrer.includes('twitter.com')) referrer = 'Twitter';
+                if (referrer.includes('linkedin.com')) referrer = 'LinkedIn';
+                if (referrer.includes('google.com')) referrer = 'Google';
+                
+                // Update UI
+                document.getElementById('deviceType').textContent = deviceType;
+                document.getElementById('browserName').textContent = browserName;
+                document.getElementById('osName').textContent = osName;
+                document.getElementById('screenRes').textContent = `${window.screen.width}x${window.screen.height}`;
+                document.getElementById('browserLanguage').textContent = navigator.language;
+                document.getElementById('referrerInfo').textContent = referrer;
+            }
+            
+            function recordTracking() {
+                const params = new URLSearchParams(window.location.search);
+                const destinationUrl = params.get('url');
+                const linkId = params.get('id');
+                const geoEnabled = params.get('geo') === '1';
+                const deviceEnabled = params.get('device') === '1';
+                const referrerEnabled = params.get('referrer') === '1';
+                const ipEnabled = params.get('ip') === '1';
+                const cookieEnabled = params.get('cookie') === '1';
+                
+                const trackingData = {
+                    id: linkId || generateId(),
+                    url: decodeURIComponent(destinationUrl),
+                    title: params.get('title'),
+                    campaign: params.get('campaign'),
+                    source: params.get('source'),
+                    medium: params.get('medium'),
+                    content: params.get('content'),
+                    term: params.get('term'),
+                    timestamp: new Date().toISOString(),
+                    referrer: document.referrer || 'direct',
+                    userAgent: navigator.userAgent,
+                    screenResolution: `${window.screen.width}x${window.screen.height}`,
+                    language: navigator.language,
+                    ipAddress: null, // Would be captured server-side
+                    geoEnabled,
+                    deviceEnabled,
+                    referrerEnabled,
+                    ipEnabled,
+                    cookieEnabled,
+                    cookieConsent: localStorage.getItem('cookieConsent') || 'none'
+                };
+                
+                // In a real app, you would send this to your server
+                console.log('Tracking data:', trackingData);
+                
+                // Update link stats in localStorage
+                updateLinkStats(linkId);
+            }
+            
+            function updateLinkStats(linkId) {
+                if (!linkId) return;
+                
+                let savedLinks = JSON.parse(localStorage.getItem('trackingLinks') || '[]');
+                const linkIndex = savedLinks.findIndex(link => link.id === linkId);
+                
+                if (linkIndex >= 0) {
+                    // Update clicks
+                    savedLinks[linkIndex].clicks = (savedLinks[linkIndex].clicks || 0) + 1;
+                    
+                    // Update unique visitors (simplified - would use cookies in real app)
+                    savedLinks[linkIndex].uniqueVisitors = (savedLinks[linkIndex].uniqueVisitors || 0) + 1;
+                    
+                    localStorage.setItem('trackingLinks', JSON.stringify(savedLinks));
+                }
+            }
+            
+            function startRedirectCountdown() {
+                const destinationUrl = decodeURIComponent(params.get('url'));
+                
+                loadingSection.style.display = 'none';
+                locationSection.style.display = 'none';
+                redirectSection.style.display = 'block';
+                
+                let countdown = 5;
+                countdownEl.textContent = countdown;
+                
+                const timer = setInterval(() => {
+                    countdown--;
+                    countdownEl.textContent = countdown;
+                    
+                    if (countdown <= 0) {
+                        clearInterval(timer);
+                        window.location.href = destinationUrl;
+                    }
+                }, 1000);
+                
+                redirectBtn.addEventListener('click', function() {
+                    clearInterval(timer);
+                    window.location.href = destinationUrl;
+                });
+            }
+            
+            function showError() {
+                loadingSection.style.display = 'none';
+                locationSection.style.display = 'none';
+                errorSection.style.display = 'block';
+            }
+            
+            function showBlockedMessage() {
+                loadingSection.style.display = 'none';
+                locationSection.style.display = 'none';
+                blockedSection.style.display = 'block';
+            }
+            
+            function isValidUrl(string) {
+                try {
+                    new URL(string);
+                    return true;
+                } catch (_) {
+                    return false;
+                }
+            }
+            
+            function generateId() {
+                return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+                    const r = Math.random() * 16 | 0;
+                    const v = c === 'x' ? r : (r & 0x3 | 0x8);
+                    return v.toString(16);
+                });
+            }
+            
+            function getAddressFromCoords(lat, lon) {
+                fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.address) {
+                            const addressParts = [];
+                            if (data.address.road) addressParts.push(data.address.road);
+                            if (data.address.village) addressParts.push(data.address.village);
+                            if (data.address.city) addressParts.push(data.address.city);
+                            if (data.address.state) addressParts.push(data.address.state);
+                            if (data.address.country) addressParts.push(data.address.country);
+                            
+                            document.getElementById('address').textContent = addressParts.join(", ");
+                        } else {
+                            document.getElementById('address').textContent = "Address not available";
+                        }
+                    })
+                    .catch(error => {
+                        document.getElementById('address').textContent = "Could not retrieve address";
+                    });
+            }
+        });
+    </script>
+</body>
+</html>
