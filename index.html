@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Link Tracker Pro</title>
+    <link rel="stylesheet" href="main.css">
+    <link rel="stylesheet" href="dashboard.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+</head>
+<body>
+    <div class="container">
+        <header class="dashboard-header">
+            <h1>Link Tracker Pro <span class="version-badge">v2.0</span></h1>
+            <div class="header-actions">
+                <button id="new-tracker-btn" class="btn btn-primary">
+                    <i class="icon-plus"></i> New Tracker
+                </button>
+                <div class="user-menu">
+                    <span class="username">Admin</span>
+                    <div class="dropdown">
+                        <i class="icon-cog"></i>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="main-content">
+            <!-- Creator Section -->
+            <div id="creator-section" class="card creator-card">
+                <h2><i class="icon-link"></i> Create New Tracking Link</h2>
+                <div class="form-group">
+                    <label for="target-url">Destination URL</label>
+                    <input type="url" id="target-url" placeholder="https://example.com" required>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="campaign-name">Campaign Name</label>
+                        <input type="text" id="campaign-name" placeholder="e.g. Summer Sale">
+                    </div>
+                    <div class="form-group">
+                        <label for="security-level">Security Level</label>
+                        <select id="security-level">
+                            <option value="standard">Standard</option>
+                            <option value="enhanced">Enhanced</option>
+                            <option value="stealth">Stealth</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Link Expiration</label>
+                    <div class="expiry-options">
+                        <div class="expiry-option selected" data-days="0">No expiration</div>
+                        <div class="expiry-option" data-days="1">24 hours</div>
+                        <div class="expiry-option" data-days="7">7 days</div>
+                        <div class="expiry-option" data-days="30">30 days</div>
+                        <div class="expiry-option" data-days="custom">Custom</div>
+                    </div>
+                    <input type="number" id="custom-expiry-days" class="hidden" placeholder="Enter days">
+                </div>
+
+                <div class="form-group">
+                    <label for="custom-message">Custom Message</label>
+                    <textarea id="custom-message" placeholder="Message shown to visitors..."></textarea>
+                </div>
+
+                <button id="generate-btn" class="btn btn-primary btn-block">
+                    <i class="icon-bolt"></i> Generate Tracking Link
+                </button>
+
+                <div class="result-container" id="result-container">
+                    <div class="result-header">
+                        <h3><i class="icon-check"></i> Your Tracker is Ready</h3>
+                    </div>
+                    <div class="tracking-link-container">
+                        <div class="tracking-link" id="tracking-link">
+                            <button class="copy-btn" id="copy-btn"><i class="icon-copy"></i></button>
+                            <span id="link-text"></span>
+                        </div>
+                        <div class="qr-code-container">
+                            <div id="qr-code"></div>
+                            <button class="btn btn-secondary" id="download-qr">
+                                <i class="icon-download"></i> Download QR
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dashboard Section -->
+            <div id="dashboard-section" class="dashboard-section">
+                <div class="dashboard-header">
+                    <h2><i class="icon-dashboard"></i> Tracking Dashboard</h2>
+                    <div class="dashboard-controls">
+                        <div class="search-box">
+                            <input type="text" placeholder="Search trackers...">
+                            <i class="icon-search"></i>
+                        </div>
+                        <select id="time-filter">
+                            <option>Last 24 hours</option>
+                            <option>Last 7 days</option>
+                            <option>Last 30 days</option>
+                            <option>All time</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value" id="total-clicks">0</div>
+                        <div class="stat-label">Total Clicks</div>
+                        <div class="stat-trend up">+12%</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="unique-visitors">0</div>
+                        <div class="stat-label">Unique Visitors</div>
+                        <div class="stat-trend up">+8%</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="conversion-rate">0%</div>
+                        <div class="stat-label">Conversion Rate</div>
+                        <div class="stat-trend down">-3%</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="avg-risk">0</div>
+                        <div class="stat-label">Avg. Risk Score</div>
+                        <div class="stat-trend up">+5%</div>
+                    </div>
+                </div>
+
+                <div class="map-container">
+                    <div id="tracker-map"></div>
+                    <div class="map-legend">
+                        <div class="legend-item"><span class="pin high-risk"></span> High Risk</div>
+                        <div class="legend-item"><span class="pin medium-risk"></span> Medium Risk</div>
+                        <div class="legend-item"><span class="pin low-risk"></span> Low Risk</div>
+                    </div>
+                </div>
+
+                <div class="trackers-table">
+                    <div class="table-header">
+                        <h3>Active Trackers</h3>
+                        <div class="table-actions">
+                            <button class="btn btn-secondary"><i class="icon-refresh"></i> Refresh</button>
+                            <button class="btn btn-secondary"><i class="icon-download"></i> Export</button>
+                        </div>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Campaign</th>
+                                <th>Destination</th>
+                                <th>Clicks</th>
+                                <th>Locations</th>
+                                <th>Created</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="trackers-table-body">
+                            <!-- Dynamic content -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="notification" id="notification"></div>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="https://cdn.rawgit.com/davidshimjs/qrcodejs/gh-pages/qrcode.min.js"></script>
+    <script src="map.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>

